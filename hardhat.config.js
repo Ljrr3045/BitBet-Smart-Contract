@@ -2,7 +2,7 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 require("hardhat-gas-reporter");
-require('hardhat-docgen');
+require("solidity-docgen");
 require("dotenv").config();
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -47,10 +47,5 @@ module.exports = {
     currency: 'USD',
     token: "ETH",
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-  },
-  docgen: {
-    path: './docs',
-    clear: true,
-    runOnCompile: true,
   }
 };
