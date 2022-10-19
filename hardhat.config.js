@@ -25,12 +25,12 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: process.env.MAINNET_URL, 
-        blockNumber: 15770806,
+        url: process.env.BSC_MAINNET, 
+        blockNumber: 22317907,
       }
     },
-    rinkeby: {
-      url: process.env.RINKEBY_URL,
+    bsc_testnet: {
+      url: process.env.BSC_TESTNET,
       accounts:{
         mnemonic: process.env.MNEMONIC
       },
@@ -38,14 +38,13 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      rinkeby: process.env.ETHERSCAN_API_KEY,
-      mainnet: process.env.ETHERSCAN_API_KEY
+      bscTestnet: process.env.BSC_API_KEY,
     }
   },
   gasReporter: {
     enabled: true,
     currency: 'USD',
-    token: "ETH",
+    token: "BNB",
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-  }
+  },
 };

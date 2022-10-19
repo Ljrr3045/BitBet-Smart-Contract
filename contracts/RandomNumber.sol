@@ -23,14 +23,14 @@ contract RandomNumber is VRFConsumerBase, Ownable{
 
     ///@notice The address of the VRF Coordinator contract must be supplied, depending on the blocksChain in which we are.
     ///@dev For both the keyHash and Fee variables, their value will be variable as long as different strings are used.
-    constructor(address vrfCoordinator) 
+    constructor(address _vrfCoordinator, address _linkAddress) 
         VRFConsumerBase(
-            vrfCoordinator,
-            0x514910771AF9Ca656af840dff83E8264EcF986CA  
+            _vrfCoordinator,
+            _linkAddress 
         )
     {
-        keyHash = 0xAA77729D3466CA35AE8D28B3BBAC7CC36A5031EFDC430821C02BC31A238AF445;
-        fee = 2 * (10 ** 18);
+        keyHash = 0xc251acd21ec4fb7f31bb8868288bfdbaeb4fbfec2df3735ddbd4f7dc8d60103c;
+        fee = 2 * (10 ** 17);
         until = 1;
     }
     

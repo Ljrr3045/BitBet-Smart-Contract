@@ -3,20 +3,23 @@ const { ethers } = require("hardhat");
 const linkAbi = require("./ContractJson/Link.json");
 
 describe("RandomNumber", async ()=> {
-    let RamdomNumber, ramdomNumber, VrfCoordinator, vrfCoordinator, link, deployer, per1, perLink;
+    let RandomNumber, randomNumber, VrfCoordinator, vrfCoordinator, link, deployer, per1, perLink;
 
     before(async ()=> {
-        await hre.network.provider.request({ method: "hardhat_impersonateAccount",params: ["0x6d1fe7f4c921385f62745ed8f61ae57156990c90"],});
+        await hre.network.provider.request({ method: "hardhat_impersonateAccount",params: ["0xd8f772840d9bf2141ec64c1b17127d14663c3226"],});
 
-        link = await new ethers.Contract( "0x514910771AF9Ca656af840dff83E8264EcF986CA" , linkAbi);
+        link = await new ethers.Contract( "0x404460C6A5EdE2D891e8297795264fDe62ADBB75" , linkAbi);
 
         VrfCoordinator = await ethers.getContractFactory("VRFCoordinator");
         vrfCoordinator = await VrfCoordinator.deploy(link.address);
 
-        RamdomNumber = await ethers.getContractFactory("RandomNumber");
-        ramdomNumber = await RamdomNumber.deploy(vrfCoordinator.address);
+        RandomNumber = await ethers.getContractFactory("RandomNumber");
+        randomNumber = await RandomNumber.deploy(
+            vrfCoordinator.address,
+            "0x404460C6A5EdE2D891e8297795264fDe62ADBB75"
+        );
 
-        perLink = await ethers.getSigner("0x6d1fe7f4c921385f62745ed8f61ae57156990c90");
+        perLink = await ethers.getSigner("0xd8f772840d9bf2141ec64c1b17127d14663c3226");
         [deployer, per1] = await ethers.getSigners();
 
         await network.provider.send("hardhat_setBalance", [
@@ -28,46 +31,46 @@ describe("RandomNumber", async ()=> {
     describe("Link balance in the contract", async ()=> {
 
         it("Shouldn't have balance", async ()=> {
-            expect(await link.connect(deployer).balanceOf(ramdomNumber.address)).to.equal(0);
+            expect(await link.connect(deployer).balanceOf(randomNumber.address)).to.equal(0);
         });
 
         it("No link does not work", async ()=> {
-            await expect(ramdomNumber.connect(deployer).getRandomNumber()).to.be.revertedWith("Not enough LINK - fill contract with faucet");
+            await expect(randomNumber.connect(deployer).getRandomNumber()).to.be.revertedWith("Not enough LINK - fill contract with faucet");
         });
 
         it("Should have balance", async ()=> {
-            await link.connect(perLink).transfer(ramdomNumber.address, ethers.utils.parseEther("1000"));
+            await link.connect(perLink).transfer(randomNumber.address, ethers.utils.parseEther("1000"));
 
-            expect(await link.connect(deployer).balanceOf(ramdomNumber.address)).to.equal(ethers.utils.parseEther("1000"));
+            expect(await link.connect(deployer).balanceOf(randomNumber.address)).to.equal(ethers.utils.parseEther("1000"));
         });
     });
 
     describe("Security", async ()=> {
         it("Only the owner can execute the functions", async ()=> {
-            await expect(ramdomNumber.connect(per1).getRandomNumber()).to.be.revertedWith("Ownable: caller is not the owner");
-            await expect(ramdomNumber.connect(per1).setUntil(5)).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(randomNumber.connect(per1).getRandomNumber()).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(randomNumber.connect(per1).setUntil(5)).to.be.revertedWith("Ownable: caller is not the owner");
         });
     });
 
     describe("Get value", async ()=> {
         it("Start value must be 0", async ()=> {
-            expect(await ramdomNumber.connect(deployer).until()).to.equal(1);
-            expect(await ramdomNumber.connect(deployer).randomResult()).to.equal(0);
+            expect(await randomNumber.connect(deployer).until()).to.equal(1);
+            expect(await randomNumber.connect(deployer).randomResult()).to.equal(0);
         });
 
         it("The 'Until' value must be modified", async ()=> {
-            await ramdomNumber.connect(deployer).setUntil(5);
-            expect(await ramdomNumber.connect(deployer).until()).to.equal(5);
+            await randomNumber.connect(deployer).setUntil(20);
+            expect(await randomNumber.connect(deployer).until()).to.equal(20);
         });
 
         it("Should return a random number in the given range", async ()=> {
-            await ramdomNumber.connect(deployer).getRandomNumber();
-            let requestId = await ramdomNumber.connect(deployer).lastRequestId();
-            await vrfCoordinator.connect(deployer).callBackWithRandomness(requestId,"777",ramdomNumber.address);
-            let value = await ramdomNumber.connect(deployer).randomResult();
+            await randomNumber.connect(deployer).getRandomNumber();
+            let requestId = await randomNumber.connect(deployer).lastRequestId();
+            await vrfCoordinator.connect(deployer).callBackWithRandomness(requestId,"777",randomNumber.address);
+            let value = await randomNumber.connect(deployer).randomResult();
 
             assert(value > 0);
-            assert(value <= 5);
+            assert(value <= 20);
         });
     });
 });
