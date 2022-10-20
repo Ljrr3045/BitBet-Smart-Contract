@@ -9,6 +9,7 @@ pragma solidity >=0.7.0 <0.9.0;
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  
 contract RandomNumber is VRFConsumerBase, Ownable{
 
@@ -48,10 +49,35 @@ contract RandomNumber is VRFConsumerBase, Ownable{
         randomResult = randomness.mod(until).add(1);
     }
 
+//Utility Functions
+
     ///@notice This function allows you to set the variable until, this variable will be used to delimit the range of 
     ///numbers in which you want to obtain the random number, ex: 1 to 50.
     ///@dev This function can only be called by the owner of the contract.
     function setUntil(uint _until) public onlyOwner{
         until = _until;
+    }
+
+    /**
+        @notice Function designed to be able to withdraw all the funds from the contract in case of 
+        receiving any token or ETH,
+        @dev If you want the function to retrieve tokens as well, you must provide the address of the token 
+        and set _withdrawToken to true.
+    */
+
+    function withdrawFunds(bool _withdrawToken, address _targetToken) public onlyOwner returns(bool _success){
+
+        if(_withdrawToken){
+            require(_targetToken != address(0), "Error: Invalid token address");
+            uint _contractBalanceInToken = IERC20(_targetToken).balanceOf(address(this));
+
+            if(_contractBalanceInToken > 0){
+                _success = IERC20(_targetToken).transfer(msg.sender, _contractBalanceInToken);
+            }
+        }
+
+        if(address(this).balance > 0){
+            (_success,) = payable(msg.sender).call{ value: address(this).balance }("");
+        }
     }
 }
