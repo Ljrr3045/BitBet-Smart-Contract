@@ -39,8 +39,7 @@ constructor(address _vrfCoordinator, address _linkAddress) public
 ```
 
 The address of the VRF Coordinator contract must be supplied, depending on the blocksChain in which we are.
-
-_For both the keyHash and Fee variables, their value will be variable as long as different strings are used._
+        @dev For both the keyHash and Fee variables, their value will be variable as long as different strings are used.
 
 ### getRandomNumber
 
@@ -48,10 +47,9 @@ _For both the keyHash and Fee variables, their value will be variable as long as
 function getRandomNumber() public returns (bytes32 requestId)
 ```
 
-This function allows you to request a random number
-
-_For this function to work, you must previously supply this contract with Link Token, to cover 
-the corresponding fees. This function can only be called by the owner of the contract._
+This function allows you to request a random number 
+        @dev For this function to work, you must previously supply this contract with Link Token, to cover 
+        the corresponding fees. This function can only be called by the owner of the contract.
 
 ### fulfillRandomness
 
@@ -68,9 +66,8 @@ function setUntil(uint256 _until) public
 ```
 
 This function allows you to set the variable until, this variable will be used to delimit the range of 
-numbers in which you want to obtain the random number, ex: 1 to 50.
-
-_This function can only be called by the owner of the contract._
+        numbers in which you want to obtain the random number, ex: 1 to 50.
+        @dev This function can only be called by the owner of the contract.
 
 ### withdrawFunds
 

@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 <0.9.0;
 
-///@title Random Number Contract
-///@author ljrr3045
-///@notice This contract has the function of communicating with the VRF Coordinator of 
-///ChainLink in order to obtain a random number safely.
+/**
+    @title Random Number Contract
+    @author ljrr3045
+    @notice This contract has the function of communicating with the VRF Coordinator of 
+    ChainLink in order to obtain a random number safely.
+*/
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -22,8 +24,10 @@ contract RandomNumber is VRFConsumerBase, Ownable{
     uint public until;
     ///@dev These are the global variables used for contract management.
 
-    ///@notice The address of the VRF Coordinator contract must be supplied, depending on the blocksChain in which we are.
-    ///@dev For both the keyHash and Fee variables, their value will be variable as long as different strings are used.
+    /**
+        @notice The address of the VRF Coordinator contract must be supplied, depending on the blocksChain in which we are.
+        @dev For both the keyHash and Fee variables, their value will be variable as long as different strings are used.
+    */
     constructor(address _vrfCoordinator, address _linkAddress) 
         VRFConsumerBase(
             _vrfCoordinator,
@@ -35,9 +39,11 @@ contract RandomNumber is VRFConsumerBase, Ownable{
         until = 1;
     }
     
-    ///@notice This function allows you to request a random number 
-    ///@dev For this function to work, you must previously supply this contract with Link Token, to cover 
-    ///the corresponding fees. This function can only be called by the owner of the contract.
+    /**
+        @notice This function allows you to request a random number 
+        @dev For this function to work, you must previously supply this contract with Link Token, to cover 
+        the corresponding fees. This function can only be called by the owner of the contract.
+    */
     function getRandomNumber() public onlyOwner returns(bytes32 requestId) {
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
         lastRequestId = requestRandomness(keyHash, fee);
@@ -51,9 +57,11 @@ contract RandomNumber is VRFConsumerBase, Ownable{
 
 //Utility Functions
 
-    ///@notice This function allows you to set the variable until, this variable will be used to delimit the range of 
-    ///numbers in which you want to obtain the random number, ex: 1 to 50.
-    ///@dev This function can only be called by the owner of the contract.
+    /**
+        @notice This function allows you to set the variable until, this variable will be used to delimit the range of 
+        numbers in which you want to obtain the random number, ex: 1 to 50.
+        @dev This function can only be called by the owner of the contract.
+    */
     function setUntil(uint _until) public onlyOwner{
         until = _until;
     }
@@ -64,7 +72,6 @@ contract RandomNumber is VRFConsumerBase, Ownable{
         @dev If you want the function to retrieve tokens as well, you must provide the address of the token 
         and set _withdrawToken to true.
     */
-
     function withdrawFunds(bool _withdrawToken, address _targetToken) public onlyOwner returns(bool _success){
 
         if(_withdrawToken){
