@@ -50,9 +50,4 @@ contract InvestMoney {
     function _getCrtokenBalance() internal view virtual returns(uint) {
         return crToken.balanceOf(address(this));
     }
-
-    ///@dev Returns the amount of token that the contract has generated since the start of the stake.
-    function _getCrtokenBalanceOfUnderlying() internal virtual returns(uint){
-        return crToken.balanceOfUnderlying(address(this));
-    }
 }
